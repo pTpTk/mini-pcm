@@ -1,0 +1,80 @@
+Item is config=0x000000000000cf05
+match: 0x000000000000cf05
+Config read52997
+Item is name=UNC_M_CAS_COUNT.RD
+match: UNC_M_CAS_COUNT.RD
+parsed event imc: "UNC_M_CAS_COUNT.RD" : {0xcf05, 0x0, 0x0}
+Item is config=0x000000000000f005
+match: 0x000000000000f005
+Config read61445
+Item is name=UNC_M_CAS_COUNT.WR
+match: UNC_M_CAS_COUNT.WR
+parsed event imc: "UNC_M_CAS_COUNT.WR" : {0xf005, 0x0, 0x0}
+Delay in seconds 2
+DEBUG: found bus 7e with device ID 3251
+DEBUG: found bus fe with device ID 3251
+membar for imc c8a80000
+debug BOX CTL is at c8aa2000
+debug BOX CTL is at c8aaa000
+membar for imc c8b00000
+debug BOX CTL is at c8b22000
+debug BOX CTL is at c8b2a000
+membar for imc c8b80000
+debug BOX CTL is at c8ba2000
+debug BOX CTL is at c8baa000
+membar for imc c8c00000
+debug BOX CTL is at c8c22000
+debug BOX CTL is at c8c2a000
+membar for imc fba80000
+debug BOX CTL is at fbaa2000
+debug BOX CTL is at fbaaa000
+membar for imc fbb00000
+debug BOX CTL is at fbb22000
+debug BOX CTL is at fbb2a000
+membar for imc fbb80000
+debug BOX CTL is at fbba2000
+debug BOX CTL is at fbbaa000
+membar for imc fbc00000
+debug BOX CTL is at fbc22000
+debug BOX CTL is at fbc2a000
+Setting control for socket 0and channel 0
+counter0 unitcontrol is at 0x4ad770
+Setting control for socket 0and channel 1
+counter0 unitcontrol is at 0x4ada70
+Setting control for socket 0and channel 2
+counter0 unitcontrol is at 0x4adf80
+Setting control for socket 0and channel 3
+counter0 unitcontrol is at 0x4ae610
+Setting control for socket 0and channel 4
+counter0 unitcontrol is at 0x4ae950
+Setting control for socket 0and channel 5
+counter0 unitcontrol is at 0x4af360
+Setting control for socket 0and channel 6
+counter0 unitcontrol is at 0x4af6a0
+Setting control for socket 0and channel 7
+counter0 unitcontrol is at 0x4af9a0
+Setting control for socket 1and channel 0
+counter0 unitcontrol is at 0x4afce0
+Setting control for socket 1and channel 1
+counter0 unitcontrol is at 0x4affe0
+Setting control for socket 1and channel 2
+counter0 unitcontrol is at 0x4b0320
+Setting control for socket 1and channel 3
+counter0 unitcontrol is at 0x4b0620
+Setting control for socket 1and channel 4
+counter0 unitcontrol is at 0x4b0960
+Setting control for socket 1and channel 5
+counter0 unitcontrol is at 0x4b1370
+Setting control for socket 1and channel 6
+counter0 unitcontrol is at 0x4b16b0
+Setting control for socket 1and channel 7
+counter0 unitcontrol is at 0x4b19b0
+W/R:0.9806,0.9618,
+W/R:0.9803,0.9516,
+W/R:0.9866,0.9561,
+W/R:0.9767,0.9554,
+W/R:0.9911,0.9625,
+W/R:0.9895,0.9650,
+W/R:0.9789,0.9582,
+W/R:0.9878,0.9626,
+W/R:0.9778,0.9569,

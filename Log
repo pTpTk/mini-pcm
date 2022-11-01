@@ -1,0 +1,116 @@
+make -C daemon/daemon/Debug
+make[1]: *** daemon/daemon/Debug: No such file or directory.  Stop.
+g++ -Wall -g -O3 -Wno-unknown-pragmas -fPIC -std=c++11 -DPCM_USE_PERF -Wextra -pthread -c createimc.cpp -o createimc.o
+createimc.cpp: In function 'sprimc::ErrorCode sprimc::programevent(const RawPMUConfigs&)':
+createimc.cpp:126:16: warning: variable 'events64' set but not used [-Wunused-but-set-variable]
+         uint64 events64[] = { 0,0,0,0 };
+                ^~~~~~~~
+createimc.cpp:111:20: warning: unused variable 'globalRegPos' [-Wunused-variable]
+     constexpr auto globalRegPos = 0;
+                    ^~~~~~~~~~~~
+createimc.cpp: In function 'void sprimc::initSocket2Bus(std::vector<std::pair<unsigned int, unsigned int> >&, sprimc::uint32, sprimc::uint32, const uint32*, sprimc::uint32)':
+createimc.cpp:240:19: error: 'PCM_INVALID_DEV_ADDR' was not declared in this scope
+     if (device == PCM_INVALID_DEV_ADDR || function == PCM_INVALID_FUNC_ADDR)
+                   ^~~~~~~~~~~~~~~~~~~~
+createimc.cpp:240:55: error: 'PCM_INVALID_FUNC_ADDR' was not declared in this scope
+     if (device == PCM_INVALID_DEV_ADDR || function == PCM_INVALID_FUNC_ADDR)
+                                                       ^~~~~~~~~~~~~~~~~~~~~
+createimc.cpp:246:44: error: 'PciHandleMM' has not been declared
+     const std::vector<MCFGRecord> & mcfg = PciHandleMM::getMCFGRecords();
+                                            ^~~~~~~~~~~
+createimc.cpp:254:13: error: 'PciHandleType' was not declared in this scope
+             PciHandleType h(mcfg[s].PCISegmentGroupNumber, bus, device, function);
+             ^~~~~~~~~~~~~
+createimc.cpp:254:13: note: suggested alternative: 'PciHandleMM'
+             PciHandleType h(mcfg[s].PCISegmentGroupNumber, bus, device, function);
+             ^~~~~~~~~~~~~
+             PciHandleMM
+createimc.cpp:255:13: error: 'h' was not declared in this scope
+             h.read32(0, &value);
+             ^
+createimc.cpp:264:26: error: 'PCM_INTEL_PCI_VENDOR_ID' was not declared in this scope
+         if (vendor_id != PCM_INTEL_PCI_VENDOR_ID)
+                          ^~~~~~~~~~~~~~~~~~~~~~~
+createimc.cpp: In function 'std::vector<long unsigned int> sprimc::getServerMemBars(sprimc::uint32, sprimc::uint32, sprimc::uint32)':
+createimc.cpp:287:5: error: 'PciHandleType' was not declared in this scope
+     PciHandleType ubox0Handle(root_segment_ubox0, root_bus_ubox0, SERVER_UBOX0_REGISTER_DEV_ADDR, SERVER_UBOX0_REGISTER_FUNC_ADDR);
+     ^~~~~~~~~~~~~
+createimc.cpp:287:5: note: suggested alternative: 'PciHandleMM'
+     PciHandleType ubox0Handle(root_segment_ubox0, root_bus_ubox0, SERVER_UBOX0_REGISTER_DEV_ADDR, SERVER_UBOX0_REGISTER_FUNC_ADDR);
+     ^~~~~~~~~~~~~
+     PciHandleMM
+createimc.cpp:289:5: error: 'ubox0Handle' was not declared in this scope
+     ubox0Handle.read32(0xd0, &mmioBase);
+     ^~~~~~~~~~~
+createimc.cpp:289:5: note: suggested alternative: 'PciHandle'
+     ubox0Handle.read32(0xd0, &mmioBase);
+     ^~~~~~~~~~~
+     PciHandle
+createimc.cpp:284:72: warning: unused parameter 'root_segment_ubox0' [-Wunused-parameter]
+ std::vector<size_t> getServerMemBars(const uint32 numIMC, const uint32 root_segment_ubox0, const uint32 root_bus_ubox0)
+                                                           ~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~
+createimc.cpp:284:105: warning: unused parameter 'root_bus_ubox0' [-Wunused-parameter]
+ std::vector<size_t> getServerMemBars(const uint32 numIMC, const uint32 root_segment_ubox0, const uint32 root_bus_ubox0)
+                                                                                            ~~~~~~~~~~~~~^~~~~~~~~~~~~~
+createimc.cpp: In function 'void sprimc::instantiateIMC(sprimc::uint32)':
+createimc.cpp:329:72: error: 'SERVER_MC_CH_PMON_BASE_ADDR' was not declared in this scope
+                     auto handle = std::make_shared<MMIORange>(memBar + SERVER_MC_CH_PMON_BASE_ADDR + channel * SERVER_MC_CH_PMON_STEP, SERVER_MC_CH_PMON_SIZE, false);
+                                                                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+createimc.cpp:329:112: error: 'SERVER_MC_CH_PMON_STEP' was not declared in this scope
+                     auto handle = std::make_shared<MMIORange>(memBar + SERVER_MC_CH_PMON_BASE_ADDR + channel * SERVER_MC_CH_PMON_STEP, SERVER_MC_CH_PMON_SIZE, false);
+                                                                                                                ^~~~~~~~~~~~~~~~~~~~~~
+createimc.cpp:329:112: note: suggested alternative: 'SPR_CHA_MSR_STEP'
+                     auto handle = std::make_shared<MMIORange>(memBar + SERVER_MC_CH_PMON_BASE_ADDR + channel * SERVER_MC_CH_PMON_STEP, SERVER_MC_CH_PMON_SIZE, false);
+                                                                                                                ^~~~~~~~~~~~~~~~~~~~~~
+                                                                                                                SPR_CHA_MSR_STEP
+createimc.cpp:329:136: error: 'SERVER_MC_CH_PMON_SIZE' was not declared in this scope
+                     auto handle = std::make_shared<MMIORange>(memBar + SERVER_MC_CH_PMON_BASE_ADDR + channel * SERVER_MC_CH_PMON_STEP, SERVER_MC_CH_PMON_SIZE, false);
+                                                                                                                                        ^~~~~~~~~~~~~~~~~~~~~~
+createimc.cpp:333:70: error: 'SERVER_MC_CH_PMON_BOX_CTL_OFFSET' was not declared in this scope
+                             std::make_shared<MMIORegister32>(handle, SERVER_MC_CH_PMON_BOX_CTL_OFFSET),
+                                                                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+createimc.cpp:334:70: error: 'SERVER_MC_CH_PMON_CTL0_OFFSET' was not declared in this scope
+                             std::make_shared<MMIORegister32>(handle, SERVER_MC_CH_PMON_CTL0_OFFSET),
+                                                                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+createimc.cpp:335:70: error: 'SERVER_MC_CH_PMON_CTL1_OFFSET' was not declared in this scope
+                             std::make_shared<MMIORegister32>(handle, SERVER_MC_CH_PMON_CTL1_OFFSET),
+                                                                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+createimc.cpp:336:70: error: 'SERVER_MC_CH_PMON_CTL2_OFFSET' was not declared in this scope
+                             std::make_shared<MMIORegister32>(handle, SERVER_MC_CH_PMON_CTL2_OFFSET),
+                                                                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+createimc.cpp:337:70: error: 'SERVER_MC_CH_PMON_CTL3_OFFSET' was not declared in this scope
+                             std::make_shared<MMIORegister32>(handle, SERVER_MC_CH_PMON_CTL3_OFFSET),
+                                                                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+createimc.cpp:338:70: error: 'SERVER_MC_CH_PMON_CTR0_OFFSET' was not declared in this scope
+                             std::make_shared<MMIORegister64>(handle, SERVER_MC_CH_PMON_CTR0_OFFSET),
+                                                                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+createimc.cpp:339:70: error: 'SERVER_MC_CH_PMON_CTR1_OFFSET' was not declared in this scope
+                             std::make_shared<MMIORegister64>(handle, SERVER_MC_CH_PMON_CTR1_OFFSET),
+                                                                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+createimc.cpp:340:70: error: 'SERVER_MC_CH_PMON_CTR2_OFFSET' was not declared in this scope
+                             std::make_shared<MMIORegister64>(handle, SERVER_MC_CH_PMON_CTR2_OFFSET),
+                                                                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+createimc.cpp:341:70: error: 'SERVER_MC_CH_PMON_CTR3_OFFSET' was not declared in this scope
+                             std::make_shared<MMIORegister64>(handle, SERVER_MC_CH_PMON_CTR3_OFFSET),
+                                                                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+createimc.cpp:342:70: error: 'SERVER_MC_CH_PMON_FIXED_CTL_OFFSET' was not declared in this scope
+                             std::make_shared<MMIORegister32>(handle, SERVER_MC_CH_PMON_FIXED_CTL_OFFSET),
+                                                                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+createimc.cpp:343:70: error: 'SERVER_MC_CH_PMON_FIXED_CTR_OFFSET' was not declared in this scope
+                             std::make_shared<MMIORegister64>(handle, SERVER_MC_CH_PMON_FIXED_CTR_OFFSET)
+                                                                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+createimc.cpp: In function 'void sprimc::programIMC(const uint32*, sprimc::uint32)':
+createimc.cpp:417:51: error: 'MC_CH_PCI_PMON_FIXED_CTL_EN' was not declared in this scope
+         *imcPMUs[socket][i].fixedCounterControl = MC_CH_PCI_PMON_FIXED_CTL_EN;
+                                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+createimc.cpp:420:81: error: 'MC_CH_PCI_PMON_FIXED_CTL_RST' was not declared in this scope
+         *imcPMUs[socket][i].fixedCounterControl = MC_CH_PCI_PMON_FIXED_CTL_EN + MC_CH_PCI_PMON_FIXED_CTL_RST;
+                                                                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+createimc.cpp:412:6: warning: unused variable 'check' [-Wunused-variable]
+  int check = 0;
+      ^~~~~
+createimc.cpp: In member function 'void sprimc::UncorePMU::print(sprimc::uint32, sprimc::uint32)':
+createimc.cpp:531:43: warning: unused parameter 'counter' [-Wunused-parameter]
+ void UncorePMU::print(uint32 ctrl, uint32 counter){
+                                    ~~~~~~~^~~~~~~
+make: *** [Makefile:95: createimc.o] Error 1

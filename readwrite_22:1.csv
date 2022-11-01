@@ -1,0 +1,1 @@
+"mlc_1"*"mlc --loaded_latency -W6 -t3600  -k1 -d0 -e"*"mem_read_45"*"for i in {2..45}; do numactl --membind=0 --physcpubind=$i memoptest 3 &  done"*"mem_read_46"*"for i in {46..46}; do numactl --membind=0 --physcpubind=$i memoptest 4 &  done"*Yes:Yes*{"2" : ["46"]}
