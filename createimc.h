@@ -79,23 +79,23 @@ namespace sprimc {
 #define SPR_UNC_PMON_UNIT_CTL_FRZ          (1 << 0)
 #define SPR_UNC_PMON_UNIT_CTL_RST_CONTROL  (1 << 8)
 #define SPR_UNC_PMON_UNIT_CTL_RST_COUNTERS (1 << 9)
-#define MC_CH_PCI_PMON_FIXED_CTL_RST (1 << 19)
-#define MC_CH_PCI_PMON_FIXED_CTL_EN (1 << 22)
-#define PCM_SERVER_IMC_PMM_DATA_READS   (0x22a0)
-#define PCM_SERVER_IMC_PMM_DATA_WRITES  (0x22a8)
-#define PCM_SERVER_IMC_MMAP_SIZE        (0x4000)
-#define PCM_SERVER_IMC_DRAM_DATA_READS  (0x2290)
-#define PCM_SERVER_IMC_DRAM_DATA_WRITES (0x2298)
+#define MC_CH_PCI_PMON_FIXED_CTL_RST       (1 << 19)
+#define MC_CH_PCI_PMON_FIXED_CTL_EN        (1 << 22)
+#define PCM_SERVER_IMC_PMM_DATA_READS      (0x22a0)
+#define PCM_SERVER_IMC_PMM_DATA_WRITES     (0x22a8)
+#define PCM_SERVER_IMC_MMAP_SIZE           (0x4000)
+#define PCM_SERVER_IMC_DRAM_DATA_READS     (0x2290)
+#define PCM_SERVER_IMC_DRAM_DATA_WRITES    (0x2298)
 constexpr auto SPR_CHA0_MSR_PMON_BOX_CTRL   = 0x2000;
 constexpr auto SPR_CHA0_MSR_PMON_CTL0       = 0x2002;
 constexpr auto SPR_CHA0_MSR_PMON_CTR0       = 0x2008;
 constexpr auto SPR_CHA0_MSR_PMON_BOX_FILTER = 0x200E;
-constexpr auto SPR_CHA_MSR_STEP = 0x10;
-constexpr auto SPR_M2IOSF_IIO_UNIT_CTL = 0x3000;
-constexpr auto SPR_M2IOSF_IIO_CTR0     = 0x3008;
-constexpr auto SPR_M2IOSF_IIO_CTL0     = 0x3002;
-constexpr auto SPR_M2IOSF_REG_STEP = 0x10;
-constexpr auto SPR_M2IOSF_NUM      = 12;
+constexpr auto SPR_CHA_MSR_STEP             = 0x10;
+constexpr auto SPR_M2IOSF_IIO_UNIT_CTL      = 0x3000;
+constexpr auto SPR_M2IOSF_IIO_CTR0          = 0x3008;
+constexpr auto SPR_M2IOSF_IIO_CTL0          = 0x3002;
+constexpr auto SPR_M2IOSF_REG_STEP          = 0x10;
+constexpr auto SPR_M2IOSF_NUM               = 12;
 
 
 
@@ -309,16 +309,15 @@ public:
 class ServerUncoreCounterState
 {
 public:
-    enum {
-        maxControllers = 4,
-        //maxChannels = 12,
-        maxChannels = 8,
-        maxXPILinks = 6,
-        maxCBOs = 128,
-        maxIIOStacks = 16,
-        maxCounters = 4,
-	maxsockets = 2
-    };
+    //const auto //maxChannels = 12;
+    static const uint8_t maxControllers = 4;
+    static const uint8_t maxChannels = 8;
+    static const uint8_t maxXPILinks = 6;
+    static const uint8_t maxCBOs = 128;
+    static const uint8_t maxIIOStacks = 16;
+    static const uint8_t maxCounters = 4;
+    static const uint8_t maxsockets = 2;
+
     enum FreeRunningCounterID
     {
         ImcReads,
@@ -326,6 +325,7 @@ public:
         PMMReads,
         PMMWrites
     };
+    
     std::array<std::array<uint64, maxChannels>, maxsockets> DRAMClocks;
     std::array<uint64, maxsockets> DRAMreads;
     std::array<uint64, maxsockets> DRAMwrites;
