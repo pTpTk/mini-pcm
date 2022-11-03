@@ -37,7 +37,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 #include <vector>
 
-namespace sprimc {
+namespace pcm {
 
 class PciHandle
 {
