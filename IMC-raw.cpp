@@ -14,25 +14,26 @@
 /*!     \file pcm-raw.cpp
   \brief Example of using CPU counters: implements a performance counter monitoring utility with raw events interface
   */
-#include <iostream>
-#include <unistd.h>
-#include <signal.h>
-#include <sys/time.h> // for gettimeofday()
-#include <math.h>
-#include <iomanip>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <string>
-#include <assert.h>
-#include <bitset>
+// #include <iostream>
+// #include <unistd.h>
+// #include <signal.h>
+// #include <sys/time.h> // for gettimeofday()
+// #include <math.h>
+// #include <iomanip>
+// #include <stdlib.h>
+// #include <stdio.h>
+// #include <string.h>
+// #include <string>
+// #include <assert.h>
+// #include <bitset>
+#include "global.h"
+
 #include "imc.h"
 
 #include <vector>
 #define PCM_DELAY_DEFAULT 1.0 // in seconds
 #define PCM_DELAY_MIN 0.015 // 15 milliseconds is practical on most modern CPUs
 #define MAX_CORES 4096
-using namespace sprimc;
 using namespace std;
 //using namespace pcm;
 
@@ -65,89 +66,22 @@ void print_usage(const string progname)
     cerr << "\n";
 }
 
-uint64 getMCCounter(int ctr, ServerUncoreCounterState & before, ServerUncoreCounterState & after)
-{
-    uint64 sum = 0;
-    for (uint32 ch =0; ch < 8; ++ch)
-    {
-        sum += after.MCCounter[ch][ctr]- before.MCCounter[ch][ctr];
-    }
-  
-    return sum;
-}
-
-RawPMUConfigs allPMUConfigs;
-
-void printfreecounters(vector<ServerUncoreCounterState>& BeforeUncoreState, vector<ServerUncoreCounterState>& AfterUncoreState, const CsvOutputType outputType)
+bool addEvent(string eventStr, pcm::IMC & imc)
 {
 
-    double cache[2][2];
-
-    for (uint32 s = 0; s < 2; ++s)
-    {
-        cache[0][s] = 0;
-        for (uint32 ch = 0; ch < 8; ++ch)
-        {
-            uint32 delta = AfterUncoreState[s].DRAMreads[s] -  BeforeUncoreState[s].DRAMreads[s];
-            cache[0][s] += delta;
-        }
-    }
-
-    for (uint32 s = 0; s < 2; ++s)
-    {
-
-        cache[1][s] = 0;
-        for (uint32 ch = 0; ch < 8; ++ch)
-        {
-            uint32 delta = AfterUncoreState[s].DRAMwrites[s] -  BeforeUncoreState[s].DRAMwrites[s];
-            cache[1][s] += delta; 
-        }
-    }
-
-    cout << "W/R ratio: ";
-
-    for (uint32 s = 0; s < 2; ++s){
-        cout << cache[1][s] / cache[0][s] << ", ";
-    }
-    cout << endl;
-
-}
-
-
-void print(vector<ServerUncoreCounterState>& BeforeUncoreState, vector<ServerUncoreCounterState>& AfterUncoreState, const CsvOutputType outputType, int delay)
-{
-    cout << "W/R:" ;
-    double ddrcyclecount =1e9 * (delay*60) / (1/2.4);
-    for (uint32 s = 0; s < 2; ++s)
-    {
-        double write =  getMCCounter(0, BeforeUncoreState[s], AfterUncoreState[s]);
-        double read =  getMCCounter(1, BeforeUncoreState[s], AfterUncoreState[s]);
-        double wpq = getMCCounter(2, BeforeUncoreState[s], AfterUncoreState[s]);
-        double rpq = getMCCounter(3, BeforeUncoreState[s], AfterUncoreState[s]);
-
-        cout << write/read << ","<<"wpq="<<wpq/ddrcyclecount<<","<<"rpq="<<rpq/ddrcyclecount<<",";
-    }
-
-    cout << endl;
-}
-
-bool addEvent(string eventStr, pmc::IMC & imc)
-{
-
-    const enum pmuNameEnum {
+    enum class pmuType {
         IMC,
         CHA
     };
-    const std::map<std::string, pmuNameEnum> pmuNameMap{{"imc", IMC},{"cha", CHA}};
+    const std::map<std::string, pmuType> pmuNameMap{{"imc", pmuType::IMC},{"cha", pmuType::CHA}};
 
-    RawEventConfig config = { {0,0,0}, "" };
-    const auto typeConfig = split(eventStr, '/');
+    const auto typeConfig = pcm::split(eventStr, '/');
     if (typeConfig.size() < 2)
     {
         cerr << "ERROR: wrong syntax in event description \"" << eventStr << "\"\n";
         return false;
     }
-    auto pmuName = typeConfig[0];
+    std::string pmuName = typeConfig[0];
     if (pmuName.empty())
     {
         pmuName = "core";
@@ -160,50 +94,16 @@ bool addEvent(string eventStr, pmc::IMC & imc)
         return false;
     }
 
-    switch(pmuNameMap[pmuName]){
-        case IMC:
+    switch(pmuNameMap.at(pmuName)){
+        case pmuType::IMC:
             imc.program(configStr);
-        case CHA:
+            break;
+        case pmuType::CHA:
+            break;
         default:
             return false;
     }
 
-    const auto configArray = split(configStr, ',');
-    bool fixed = false;
-    for (auto item : configArray)
-    {
-        string  f0, f1, f2;
-        //if (match(item, "config=", &config.first[0])) {}
-        cout << "Item is " << item << "\n";
-        if (match("config=(0[xX][0-9a-fA-F]+)", item, f0)) {
-        config.first[0] = strtoll(f0.c_str(), NULL, 16);
-        cout << "Config read" << config.first[0] << "\n";	
-        }
-        else if (match("config1=(0[xX][0-9a-fA-F]+)", item, f1)) {
-        config.first[1] = strtoll(f1.c_str(), NULL, 16);
-        cout  << "Config1 read" << config.first[1] << "\n";	
-        }
-        else if (match("config2=(0[xX][0-9a-fA-F]+)", item, f2)) {
-        config.first[2] = strtoll(f2.c_str(), NULL, 16);
-        cout  << "Config2 read" << config.first[2] << "\n";	
-        }
-        else if (match("name=(.*)", item, config.second)) {}
-        //else if (pcm_sscanf(item) >> s_expect("name=") >> setw(255) >> config.second) {}
-        else if (item == "fixed")
-        {
-            fixed = true;
-        }
-        else
-        {
-            cerr << "ERROR: unknown token " << item << " in event description \"" << eventStr << "\"\n";
-            return false;
-        }
-    }
-    cout << "parsed "<< (fixed?"fixed ":"")<<"event " << pmuName << ": \"" << hex << config.second << "\" : {0x" << hex << config.first[0] << ", 0x" << config.first[1] << ", 0x" << config.first[2] << "}\n" << dec;
-    if (fixed)
-        allPMUConfigs[pmuName].fixed.push_back(config);
-    else
-        allPMUConfigs[pmuName].programmable.push_back(config);
     return true;
 }
 
@@ -277,10 +177,10 @@ int main(int argc, char* argv[])
     std::cout.precision(4);
     std::cout << std::fixed;
 
-    std::vector<std::vector<uint64>> counter0, prev0;
-    std::vector<std::vector<uint64>> counter1, prev1;
-    std::vector<std::vector<uint64>> counter2, prev2;
-    std::vector<std::vector<uint64>> counter3, prev3;
+    std::vector<std::vector<pcm::uint64>> counter0, prev0;
+    std::vector<std::vector<pcm::uint64>> counter1, prev1;
+    std::vector<std::vector<pcm::uint64>> counter2, prev2;
+    std::vector<std::vector<pcm::uint64>> counter3, prev3;
 
     imc.getMCCounter(prev0, 0);
     imc.getMCCounter(prev1, 1);

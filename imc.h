@@ -16,7 +16,7 @@ class IMC{
     void getMCCounter(std::vector<std::vector<uint64>>& M, int counterId);
     void getDRAMReads(std::vector<uint64>& M);
     void getDRAMWrites(std::vector<uint64>& M);
-    virtual ~IMC() = 0;
+    virtual ~IMC(){}
 
   private:
     std::vector<std::pair<uint32, uint32>> socket2UBOX0bus;
