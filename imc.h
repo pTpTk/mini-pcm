@@ -12,11 +12,15 @@ class IMC{
   public:
     IMC();
     bool program(std::string configStr);
+    void enableFixed();
     void getDRAMClocks(std::vector<std::vector<uint64>>& M);
     void getMCCounter(std::vector<std::vector<uint64>>& M, int counterId);
     void getDRAMReads(std::vector<uint64>& M);
     void getDRAMWrites(std::vector<uint64>& M);
     virtual ~IMC(){}
+
+    void initFreeze();
+    void run();
 
   private:
     std::vector<std::pair<uint32, uint32>> socket2UBOX0bus;

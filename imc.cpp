@@ -52,6 +52,8 @@ IMC::IMC()
             throw std::exception();
         }
     }
+
+    initFreeze();
 }
 
 
@@ -78,21 +80,42 @@ bool IMC::program(std::string configStr){
     {
         for (auto& imcPMU : imcPMUsPerSocket)
         {
-            imcPMU.initFreeze();
-            // enable fixed counter (DRAM clocks)
-            *imcPMU.fixedCounterControl = MC_CH_PCI_PMON_FIXED_CTL_EN;
-            // reset it
-            *imcPMU.fixedCounterControl = MC_CH_PCI_PMON_FIXED_CTL_EN + MC_CH_PCI_PMON_FIXED_CTL_RST;
-        
             auto ctrl = imcPMU.counterControl[eventCount];
-            *ctrl = event;
-
-            imcPMU.resetUnfreeze();
+            if (ctrl.get() != nullptr)
+                *ctrl = event;
         }
     }
 
     eventCount++;
     return true;
+}
+
+void IMC::enableFixed()
+{
+    for (auto& imcPMUsPerSocket : imcPMUs)
+    {
+        for (auto& imcPMU : imcPMUsPerSocket)
+        {
+            // enable fixed counter (DRAM clocks)
+            *imcPMU.fixedCounterControl = MC_CH_PCI_PMON_FIXED_CTL_EN;
+            // reset it
+            *imcPMU.fixedCounterControl = MC_CH_PCI_PMON_FIXED_CTL_EN + MC_CH_PCI_PMON_FIXED_CTL_RST;
+        }
+    }
+}
+
+void IMC::initFreeze()
+{
+    for (auto& imcPMUsPerSocket : imcPMUs)
+        for (auto& imcPMU : imcPMUsPerSocket)
+            imcPMU.initFreeze();
+}
+
+void IMC::run()
+{
+    for (auto& imcPMUsPerSocket : imcPMUs)
+        for (auto& imcPMU : imcPMUsPerSocket)
+            imcPMU.resetUnfreeze();
 }
 
 void IMC::getDRAMClocks(std::vector<std::vector<uint64>>& M)
@@ -117,15 +140,19 @@ void IMC::getMCCounter(std::vector<std::vector<uint64>>& M, int counterId)
         std::cerr << "Trying to read unused counter " << counterId;
         return;
     }
-    M.resize(imcPMUs.size());
-    for(int i = 0; i < imcPMUs.size(); ++i){
-        M[i].resize(imcPMUs[i].size());
+
+    if (M.size() != imcPMUs.size()) {
+        M.resize(imcPMUs.size());
+        for(int i = 0; i < imcPMUs.size(); ++i){
+            M[i].resize(imcPMUs[i].size());
+        }
     }
 
     for(int i = 0; i < imcPMUs.size(); ++i){
         for(int j = 0; j < imcPMUs[i].size(); ++j){
             imcPMUs[i][j].freeze();
             M[i][j] = *(imcPMUs[i][j].counterValue[counterId]);
+            // printf("imcPMU[%d][%d] pmu.counterValue[%d] = %x value = %d\n", i, j, counterId, imcPMUs[i][j].counterValue[counterId], M[i][j]);
             imcPMUs[i][j].unfreeze();
         }
     }

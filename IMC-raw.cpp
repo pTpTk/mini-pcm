@@ -169,6 +169,7 @@ int main(int argc, char* argv[])
         }
     } while (argc > 1); // end of command line parsing loop
 
+    imc.run();
 
     if (delay <= 0.0) delay = PCM_DELAY_DEFAULT;
 
