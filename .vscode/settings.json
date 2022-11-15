@@ -76,5 +76,6 @@
         "locale": "cpp",
         "xlocbuf": "cpp",
         "xlocmes": "cpp"
-    }
+    },
+    "C_Cpp.errorSquiggles": "Enabled"
 }

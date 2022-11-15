@@ -2,6 +2,7 @@
 
 #include "global.h"
 #include "pci.h"
+#include "pmu.h"
 
 namespace pcm
 {
@@ -17,6 +18,8 @@ class CHA{
 
   private:
     uint32 getMaxNumOfCBoxes() const;
+
+    std::vector<std::vector<UncorePMU>> cboPMUs;
 };
 
 }   // namespace pcm
