@@ -43,7 +43,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 #include <sys/pciio.h>
 #endif
 
-namespace sprimc {
+namespace pcm {
 
 #ifdef _MSC_VER
 

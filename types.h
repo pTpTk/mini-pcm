@@ -3,7 +3,8 @@
 
 #include <string.h>
 
-namespace sprimc {
+namespace pcm
+{
 
 typedef unsigned long long uint64;
 typedef signed long long int64;
