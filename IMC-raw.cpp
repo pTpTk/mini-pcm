@@ -191,7 +191,7 @@ int main(int argc, char* argv[])
 
     double write, read, wpq, rpq;
     double ddrcyclecount = 1e9 * (delay*60) / (1/2.4);
-    slidingWindow<double> writeSW(10), readSW(10), wpqSW(10), rpqSW(10);
+    slidingWindow<int> writeSW(10), readSW(10), wpqSW(10), rpqSW(10);
 
     while (1){
 
@@ -226,6 +226,10 @@ int main(int argc, char* argv[])
             << ", rpq = " << rpqSW()/ddrcyclecount 
             << std::endl;
 
+        std::cout << "writeSW content: " << writeSW;
+        std::cout << "readSW content: " << readSW;
+        std::cout << "wpqSW content: " << wpqSW;
+        std::cout << "rpqSW content: " << rpqSW;
 
         prev0 = counter0;
         prev1 = counter1;
