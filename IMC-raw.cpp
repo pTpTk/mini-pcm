@@ -29,6 +29,7 @@
 #include "global.h"
 
 #include "imc.h"
+#include "slidingwindow.h"
 
 #include <vector>
 #define PCM_DELAY_DEFAULT 1.0 // in seconds
@@ -190,6 +191,7 @@ int main(int argc, char* argv[])
 
     double write, read, wpq, rpq;
     double ddrcyclecount = 1e9 * (delay*60) / (1/2.4);
+    slidingWindow<double> writeSW(10), readSW(10), wpqSW(10), rpqSW(10);
 
     while (1){
 
@@ -200,22 +202,29 @@ int main(int argc, char* argv[])
         imc.getMCCounter(counter2, 2);
         imc.getMCCounter(counter3, 3);
 
+        write = 0;
+        read = 0;
+        wpq = 0;
+        rpq = 0;
+        
         for(int i = 0; i < 2; i++){
-
-            write = 0;
-            read = 0;
-            wpq = 0;
-            rpq = 0;
-
             for(int j = 0; j < counter0[i].size(); j++){
                 write += counter0[i][j] - prev0[i][j];
                 read  += counter1[i][j] - prev1[i][j];
                 wpq   += counter2[i][j] - prev2[i][j];
                 rpq   += counter3[i][j] - prev3[i][j];
             }
-
-            std::cout << "W/R: " << write/read << ", wpq = " << wpq/ddrcyclecount << ", rpq = " << rpq/ddrcyclecount << std::endl;
         }
+
+        writeSW = write;
+        readSW  = read;
+        wpqSW   = wpq;
+        rpqSW   = rpq;
+
+        std::cout << "W/R: " << writeSW()/readSW()
+            << ", wpq = " << wpqSW()/ddrcyclecount 
+            << ", rpq = " << rpqSW()/ddrcyclecount 
+            << std::endl;
 
 
         prev0 = counter0;
