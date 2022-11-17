@@ -24,4 +24,14 @@ private:
 
 };
 
+FILE * tryOpen(const char * path, const char * mode);
+
+std::string readSysFS(const char * path, bool silent);
+
+bool writeSysFS(const char * path, const std::string & value, bool silent);
+
+int readMaxFromSysFS(const char * path);
+
+std::string safe_getenv(const char* env);
+
 }   // namespace pcm

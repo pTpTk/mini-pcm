@@ -13,15 +13,18 @@
 */
 
 #include "types.h"
-
-#ifdef _MSC_VER
-#include "windows.h"
-#elif __APPLE__
-#include <MSRAccessor.h>
-#endif
-
 #include "mutex.h"
 #include <memory>
+#include <sys/types.h>
+#include <stdio.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include "types.h"
+#include "msr.h"
+#include "utils.h"
+#include <assert.h>
+#include <mutex>
 
 namespace pcm {
 
@@ -29,14 +32,7 @@ bool noMSRMode();
 
 class MsrHandle
 {
-#ifdef _MSC_VER
-    HANDLE hDriver;
-#elif __APPLE__
-    static MSRAccessor * driver;
-    static int num_handles;
-#else
     int32 fd;
-#endif
     uint32 cpu_id;
     MsrHandle();                                // forbidden
     MsrHandle(const MsrHandle &);               // forbidden
@@ -47,12 +43,6 @@ public:
     int32 read(uint64 msr_number, uint64 * value);
     int32 write(uint64 msr_number, uint64 value);
     int32 getCoreId() { return (int32)cpu_id; }
-#ifdef __APPLE__
-    int32 buildTopology(uint32 num_cores, void *);
-    uint32 getNumInstances();
-    uint32 incrementNumInstances();
-    uint32 decrementNumInstances();
-#endif
     virtual ~MsrHandle();
 };
 
@@ -106,36 +96,6 @@ public:
         mutex.unlock();
     }
 
-#ifdef __APPLE__
-    int32 buildTopology(uint32 num_cores, void * p)
-    {
-        if (pHandle)
-            return pHandle->buildTopology(num_cores, p);
-
-        throw std::exception();
-    }
-    uint32 getNumInstances()
-    {
-        if (pHandle)
-            return pHandle->getNumInstances();
-
-        throw std::exception();
-    }
-    uint32 incrementNumInstances()
-    {
-        if (pHandle)
-            return pHandle->incrementNumInstances();
-
-        throw std::exception();
-    }
-    uint32 decrementNumInstances()
-    {
-        if (pHandle)
-            return pHandle->decrementNumInstances();
-
-        throw std::exception();
-    }
-#endif
     virtual ~SafeMsrHandle()
     { }
 };

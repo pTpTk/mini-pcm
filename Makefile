@@ -1,7 +1,7 @@
-all: utils.o pci.o pmu.o imc.o IMC-raw
+all: utils.o pci.o mmio.o msr.o pmu.o imc.o cha.o IMC-raw
 
-IMC-raw: IMC-raw.cpp utils.o pci.o pmu.o imc.o
-	g++ IMC-raw.cpp utils.o pci.o pmu.o imc.o -o IMC-raw.x 
+IMC-raw: IMC-raw.cpp utils.o pci.o mmio.o msr.o pmu.o imc.o cha.o
+	g++ IMC-raw.cpp utils.o pci.o mmio.o msr.o pmu.o imc.o cha.o -o IMC-raw.x 
 
 utils.o: utils.h utils.cpp global.h types.h
 	g++ -c utils.cpp -o utils.o
@@ -9,11 +9,20 @@ utils.o: utils.h utils.cpp global.h types.h
 pci.o: pci.h pci.cpp global.h types.h
 	g++ -c pci.cpp -o pci.o
 
+msr.o: msr.h msr.cpp global.h types.h
+	g++ -c msr.cpp -o msr.o
+
 pmu.o: pmu.h pmu.cpp global.h types.h
 	g++ -c pmu.cpp -o pmu.o
 
 imc.o: imc.h imc.cpp global.h types.h
 	g++ -c imc.cpp -o imc.o
+
+cha.o: cha.h cha.cpp global.h types.h
+	g++ -c cha.cpp -o cha.o
+
+mmio.o: mmio.h mmio.cpp global.h types.h
+	g++ -c mmio.cpp -o mmio.o
 
 debug: $(wildcard *.h) $(wildcard *.cpp)
 	g++ -o debug.x $(wildcard *.cpp)

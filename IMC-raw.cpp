@@ -29,6 +29,7 @@
 #include "global.h"
 
 #include "imc.h"
+#include "cha.h"
 
 #include <vector>
 #define PCM_DELAY_DEFAULT 1.0 // in seconds
@@ -99,6 +100,7 @@ bool addEvent(string eventStr, pcm::IMC & imc)
             imc.program(configStr);
             break;
         case pmuType::CHA:
+            cha.program(configStr);
             break;
         default:
             return false;
@@ -124,6 +126,7 @@ int main(int argc, char* argv[])
     int iteration = 1;
 
     pcm::IMC imc;
+    pcm::CHA cha;
 
     if (argc > 1) do
     {
@@ -183,10 +186,10 @@ int main(int argc, char* argv[])
     std::vector<std::vector<pcm::uint64>> counter2, prev2;
     std::vector<std::vector<pcm::uint64>> counter3, prev3;
 
-    imc.getMCCounter(prev0, 0);
-    imc.getMCCounter(prev1, 1);
-    imc.getMCCounter(prev2, 2);
-    imc.getMCCounter(prev3, 3);
+    imc.getCounter(prev0, 0);
+    imc.getCounter(prev1, 1);
+    imc.getCounter(prev2, 2);
+    imc.getCounter(prev3, 3);
 
     double write, read, wpq, rpq;
     double ddrcyclecount = 1e9 * (delay*60) / (1/2.4);
@@ -195,10 +198,10 @@ int main(int argc, char* argv[])
 
         ::sleep(delay);
 
-        imc.getMCCounter(counter0, 0);
-        imc.getMCCounter(counter1, 1);
-        imc.getMCCounter(counter2, 2);
-        imc.getMCCounter(counter3, 3);
+        imc.getCounter(counter0, 0);
+        imc.getCounter(counter1, 1);
+        imc.getCounter(counter2, 2);
+        imc.getCounter(counter3, 3);
 
         for(int i = 0; i < 2; i++){
 

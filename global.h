@@ -59,8 +59,6 @@ constexpr auto SPR_CHA0_MSR_PMON_CTL0       = 0x2002;
 constexpr auto SPR_CHA0_MSR_PMON_CTR0       = 0x2008;
 constexpr auto SPR_CHA0_MSR_PMON_BOX_FILTER = 0x200E;
 constexpr auto SPR_CHA_MSR_STEP             = 0x10;
-inline auto CX_MSR_PMON_BOX_FILTER(uint32 Cbo)
-    { return SPR_CHA0_MSR_PMON_BOX_FILTER + SPR_CHA_MSR_STEP * Cbo; }
 
 constexpr auto SPR_M2IOSF_IIO_UNIT_CTL      = 0x3000;
 constexpr auto SPR_M2IOSF_IIO_CTR0          = 0x3008;

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "gloabl.h"
+#include "global.h"
 
 namespace pcm
 {

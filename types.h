@@ -2,6 +2,7 @@
 #define TYPE_H
 
 #include <string.h>
+#include <iostream>
 
 namespace pcm
 {

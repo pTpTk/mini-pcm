@@ -134,7 +134,7 @@ void IMC::getDRAMClocks(std::vector<std::vector<uint64>>& M)
     }
 }
 
-void IMC::getMCCounter(std::vector<std::vector<uint64>>& M, int counterId)
+void IMC::getCounter(std::vector<std::vector<uint64>>& M, int counterId)
 {
     if (counterId >= eventCount){
         std::cerr << "Trying to read unused counter " << counterId;

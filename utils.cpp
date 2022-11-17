@@ -55,4 +55,70 @@ inline std::istream & operator >> (std::istream && istr, s_expect && s)
     return istr;
 }
 
+FILE * tryOpen(const char * path, const char * mode)
+{
+    FILE * f = fopen(path, mode);
+    if (!f)
+    {
+        f = fopen((std::string("/pcm") + path).c_str(), mode);
+    }
+    return f;
+}
+
+std::string readSysFS(const char * path, bool silent = false)
+{
+    FILE * f = tryOpen(path, "r");
+    if (!f)
+    {
+        if (silent == false) std::cerr << "ERROR: Can not open " << path << " file.\n";
+        return std::string();
+    }
+    char buffer[1024];
+    if(NULL == fgets(buffer, 1024, f))
+    {
+        if (silent == false) std::cerr << "ERROR: Can not read from " << path << ".\n";
+        fclose(f);
+        return std::string();
+    }
+    fclose(f);
+    return std::string(buffer);
+}
+
+bool writeSysFS(const char * path, const std::string & value, bool silent = false)
+{
+    FILE * f = tryOpen(path, "w");
+    if (!f)
+    {
+        if (silent == false) std::cerr << "ERROR: Can not open " << path << " file.\n";
+        return false;
+    }
+    if (fputs(value.c_str(), f) < 0)
+    {
+        if (silent == false) std::cerr << "ERROR: Can not write to " << path << ".\n";
+        fclose(f);
+        return false;
+    }
+    fclose(f);
+    return true;
+}
+
+int readMaxFromSysFS(const char * path)
+{
+    std::string content = readSysFS(path);
+    const char * buffer = content.c_str();
+    int result = -1;
+    std::istringstream(buffer) >> s_expect("0-") >> result;
+    if(result == -1)
+    {
+       std::istringstream(buffer) >> result;
+    }
+    return result;
+}
+
+std::string safe_getenv(const char* env)
+{
+    const auto getenvResult = std::getenv(env);
+    return getenvResult ? std::string(getenvResult) : std::string("");
+}
+
 }   // namespace pcm
