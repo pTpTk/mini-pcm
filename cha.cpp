@@ -28,8 +28,6 @@ CHA::CHA()
 {
     eventCount = 0;
     cboPMUs.resize(2);
-    printf("num_cores = %d, max num of cboxes = %d\n", getNumCores(), getMaxNumOfCBoxes());
-    exit(0);
     for (uint32 s = 0; s < cboPMUs.size(); ++s)
     {
         auto handle = (s == 0) ? std::make_shared<SafeMsrHandle>(0) 

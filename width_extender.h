@@ -80,7 +80,7 @@ private:
 
 public:
 
-    CounterWidthExtender(AbstractRawCounter * raw_counter_, uint64 counter_width_, uint32 watchdog_delay_ms_)
+    CounterWidthExtender(AbstractRawCounter * raw_counter_, uint64 counter_width_, uint32 watchdog_delay_ms_) : raw_counter(raw_counter_), counter_width(counter_width_), watchdog_delay_ms(watchdog_delay_ms_)
     {
         last_raw_value = (*raw_counter)();
         extended_value = last_raw_value;

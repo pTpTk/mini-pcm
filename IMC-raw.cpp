@@ -36,7 +36,7 @@
 #define PCM_DELAY_MIN 0.015 // 15 milliseconds is practical on most modern CPUs
 #define MAX_CORES 4096
 using namespace std;
-using namespace pcm;
+// using namespace pcm;
 
 bool show_partial_core_output = false;
 bitset<MAX_CORES> ycores;
@@ -67,7 +67,7 @@ void print_usage(const string progname)
     cerr << "\n";
 }
 
-bool addEvent(string eventStr)
+bool addEvent(string eventStr, pcm::IMC& imc, pcm::CHA& cha)
 {
 
     enum class pmuType {
@@ -109,20 +109,20 @@ bool addEvent(string eventStr)
     return true;
 }
 
-pcm::IMC imc;
-pcm::CHA cha;
-
 
 int main(int argc, char* argv[])
 {
     //set_signal_handlers();
+
+    pcm::IMC imc;
+    pcm::CHA cha;
 
 
     cerr << "\n";
     cerr << " Processor Counter Monitor: Raw Event Monitoring Utility \n";
     cerr << "\n";
 
-    double delay = -1.0;
+    double delay = 1.0;
     string program = string(argv[0]);
     int iteration = 1;
 
@@ -151,7 +151,7 @@ int main(int argc, char* argv[])
             argv++;
             argc--;
 
-            if (addEvent(*argv) == false)
+            if (addEvent(*argv, imc, cha) == false)
             {
                 exit(EXIT_FAILURE);
             }
@@ -193,11 +193,12 @@ int main(int argc, char* argv[])
 
     double write, read, wpq, rpq;
     double ddrcyclecount = 1e9 * (delay*60) / (1/2.4);
-    int64 diff;
+    long long diff;
 
     while (1){
 
-        ::sleep(delay);
+        // ::sleep(delay);
+        for(int i = 0; i < 100000; i++){}
 
         // imc.getCounter(counter0, 0);
         // imc.getCounter(counter1, 1);
@@ -224,11 +225,11 @@ int main(int argc, char* argv[])
 
         for(int i = 0; i < counter0.size(); i++){
             for(int j = 0; j < counter0[i].size(); j++){
-                diff += counter0[i][j] - prev[i][j];
+                diff += counter0[i][j] - prev0[i][j];
             }
         }
 
-        std::cout << "diff = " << diff;
+        std::cout << "diff = " << diff << std::endl;
         diff = 0;
 
         prev0 = counter0;
