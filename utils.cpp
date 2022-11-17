@@ -29,5 +29,30 @@ bool match(const std::string& subtoken, const std::string& sname, std::string& r
 
 }
 
+void s_expect::match(std::istream & istr) const
+{
+    istr >> std::noskipws;
+    const auto len = length();
+    char * buffer = new char[len + 2];
+    buffer[0] = 0;
+    istr.get(buffer, len+1);
+    if (*this != std::string(buffer))
+    {
+        istr.setstate(std::ios_base::failbit);
+    }
+    delete [] buffer;
+}
+
+inline std::istream & operator >> (std::istream & istr, s_expect && s)
+{
+    s.match(istr);
+    return istr;
+}
+
+inline std::istream & operator >> (std::istream && istr, s_expect && s)
+{
+    s.match(istr);
+    return istr;
+}
 
 }   // namespace pcm

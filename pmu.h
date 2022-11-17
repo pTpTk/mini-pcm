@@ -1,25 +1,11 @@
 #pragma once
 
 #include "global.h"
+#include "mmio.h"
+#include "msr.h"
 
 namespace pcm
 {
-
-
-class MMIORange
-{
-    int32 fd;
-    char * mmapAddr;
-    const uint64 size;
-    const bool readonly;
-public:
-    MMIORange(uint64 baseAddr_, uint64 size_, bool readonly_ = true);
-    uint32 read32(uint64 offset);
-    uint64 read64(uint64 offset);
-    void write32(uint64 offset, uint32 val);
-    void write64(uint64 offset, uint64 val);
-    ~MMIORange();
-};
 
 class HWRegister
 {
@@ -27,6 +13,50 @@ public:
     virtual void operator = (uint64 val) = 0; // write operation
     virtual operator uint64 () = 0; //read operation
     virtual ~HWRegister() {}
+};
+
+class UncorePMU
+{
+    typedef std::shared_ptr<HWRegister> HWRegisterPtr;
+    uint32 cpu_model_;
+    uint32 getCPUModel();
+    uint32 eventCount;
+    //HWRegisterPtr unitControl;
+public:
+    HWRegisterPtr unitControl;
+    HWRegisterPtr counterControl[4];
+    HWRegisterPtr counterValue[4];
+    HWRegisterPtr fixedCounterControl;
+    HWRegisterPtr fixedCounterValue;
+    HWRegisterPtr filter[2];
+
+    UncorePMU(const HWRegisterPtr& unitControl_,
+        const HWRegisterPtr& counterControl0,
+        const HWRegisterPtr& counterControl1,
+        const HWRegisterPtr& counterControl2,
+        const HWRegisterPtr& counterControl3,
+        const HWRegisterPtr& counterValue0,
+        const HWRegisterPtr& counterValue1,
+        const HWRegisterPtr& counterValue2,
+        const HWRegisterPtr& counterValue3,
+        const HWRegisterPtr& fixedCounterControl_ = HWRegisterPtr(),
+        const HWRegisterPtr& fixedCounterValue_ = HWRegisterPtr(),
+        const HWRegisterPtr& filter0 = HWRegisterPtr(),
+        const HWRegisterPtr& filter1 = HWRegisterPtr()
+    );
+    UncorePMU() {}
+    virtual ~UncorePMU() {}
+    bool valid() const
+    {
+        return unitControl.get() != nullptr;
+    }
+    void cleanup();
+    void freeze();
+    bool initFreeze();
+    void unfreeze();
+    void resetUnfreeze();
+    void print(uint32 ctrl, uint32 counter);
+
 };
 
 class MMIORegister64 : public HWRegister
@@ -75,48 +105,27 @@ public:
     }
 };
 
-class UncorePMU
+class MSRRegister : public HWRegister
 {
-    typedef std::shared_ptr<HWRegister> HWRegisterPtr;
-    uint32 cpu_model_;
-    uint32 getCPUModel();
-    uint32 eventCount;
-    //HWRegisterPtr unitControl;
+    std::shared_ptr<SafeMsrHandle> handle;
+    size_t offset;
 public:
-    HWRegisterPtr unitControl;
-    HWRegisterPtr counterControl[4];
-    HWRegisterPtr counterValue[4];
-    HWRegisterPtr fixedCounterControl;
-    HWRegisterPtr fixedCounterValue;
-    HWRegisterPtr filter[2];
-
-    UncorePMU(const HWRegisterPtr& unitControl_,
-        const HWRegisterPtr& counterControl0,
-        const HWRegisterPtr& counterControl1,
-        const HWRegisterPtr& counterControl2,
-        const HWRegisterPtr& counterControl3,
-        const HWRegisterPtr& counterValue0,
-        const HWRegisterPtr& counterValue1,
-        const HWRegisterPtr& counterValue2,
-        const HWRegisterPtr& counterValue3,
-        const HWRegisterPtr& fixedCounterControl_ = HWRegisterPtr(),
-        const HWRegisterPtr& fixedCounterValue_ = HWRegisterPtr(),
-        const HWRegisterPtr& filter0 = HWRegisterPtr(),
-        const HWRegisterPtr& filter1 = HWRegisterPtr()
-    );
-    UncorePMU() {}
-    virtual ~UncorePMU() {}
-    bool valid() const
+    MSRRegister(const std::shared_ptr<SafeMsrHandle> & handle_, size_t offset_) :
+        handle(handle_),
+        offset(offset_)
     {
-        return unitControl.get() != nullptr;
     }
-    void cleanup();
-    void freeze();
-    bool initFreeze();
-    void unfreeze();
-    void resetUnfreeze();
-    void print(uint32 ctrl, uint32 counter);
-
+    void operator = (uint64 val) override
+    {
+        handle->write(offset, val);
+    }
+    operator uint64 () override
+    {
+        uint64 value = 0;
+        handle->read(offset, &value);
+        // std::cout << "reading MSR " << offset << " returning " << value << std::endl;
+        return value;
+    }
 };
 
 }   // namespace pcm

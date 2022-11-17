@@ -55,6 +55,6 @@ utint32 CHA::getMaxNumOfCBoxes() const
     return num;
 }
 
-
+int32 CHA::getNumCores
 
 }   // namespace pcm
