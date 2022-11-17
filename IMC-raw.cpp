@@ -36,7 +36,7 @@
 #define PCM_DELAY_MIN 0.015 // 15 milliseconds is practical on most modern CPUs
 #define MAX_CORES 4096
 using namespace std;
-//using namespace pcm;
+using namespace pcm;
 
 bool show_partial_core_output = false;
 bitset<MAX_CORES> ycores;
@@ -67,7 +67,7 @@ void print_usage(const string progname)
     cerr << "\n";
 }
 
-bool addEvent(string eventStr, pcm::IMC & imc)
+bool addEvent(string eventStr)
 {
 
     enum class pmuType {
@@ -109,7 +109,8 @@ bool addEvent(string eventStr, pcm::IMC & imc)
     return true;
 }
 
-
+pcm::IMC imc;
+pcm::CHA cha;
 
 
 int main(int argc, char* argv[])
@@ -124,9 +125,6 @@ int main(int argc, char* argv[])
     double delay = -1.0;
     string program = string(argv[0]);
     int iteration = 1;
-
-    pcm::IMC imc;
-    pcm::CHA cha;
 
     if (argc > 1) do
     {
@@ -153,7 +151,7 @@ int main(int argc, char* argv[])
             argv++;
             argc--;
 
-            if (addEvent(*argv, imc) == false)
+            if (addEvent(*argv) == false)
             {
                 exit(EXIT_FAILURE);
             }
@@ -173,6 +171,7 @@ int main(int argc, char* argv[])
     } while (argc > 1); // end of command line parsing loop
 
     imc.run();
+    cha.run();
 
     if (delay <= 0.0) delay = PCM_DELAY_DEFAULT;
 
@@ -186,45 +185,56 @@ int main(int argc, char* argv[])
     std::vector<std::vector<pcm::uint64>> counter2, prev2;
     std::vector<std::vector<pcm::uint64>> counter3, prev3;
 
-    imc.getCounter(prev0, 0);
-    imc.getCounter(prev1, 1);
-    imc.getCounter(prev2, 2);
-    imc.getCounter(prev3, 3);
+    // imc.getCounter(prev0, 0);
+    // imc.getCounter(prev1, 1);
+    // imc.getCounter(prev2, 2);
+    // imc.getCounter(prev3, 3);
+    cha.getCounter(prev0, 0);
 
     double write, read, wpq, rpq;
     double ddrcyclecount = 1e9 * (delay*60) / (1/2.4);
+    int64 diff;
 
     while (1){
 
         ::sleep(delay);
 
-        imc.getCounter(counter0, 0);
-        imc.getCounter(counter1, 1);
-        imc.getCounter(counter2, 2);
-        imc.getCounter(counter3, 3);
+        // imc.getCounter(counter0, 0);
+        // imc.getCounter(counter1, 1);
+        // imc.getCounter(counter2, 2);
+        // imc.getCounter(counter3, 3);
+        cha.getCounter(counter0, 0);
 
-        for(int i = 0; i < 2; i++){
+        // for(int i = 0; i < 2; i++){
 
-            write = 0;
-            read = 0;
-            wpq = 0;
-            rpq = 0;
+        //     write = 0;
+        //     read = 0;
+        //     wpq = 0;
+        //     rpq = 0;
 
+        //     for(int j = 0; j < counter0[i].size(); j++){
+        //         write += counter0[i][j] - prev0[i][j];
+        //         read  += counter1[i][j] - prev1[i][j];
+        //         wpq   += counter2[i][j] - prev2[i][j];
+        //         rpq   += counter3[i][j] - prev3[i][j];
+        //     }
+
+        //     std::cout << "W/R: " << write/read << ", wpq = " << wpq/ddrcyclecount << ", rpq = " << rpq/ddrcyclecount << std::endl;
+        // }
+
+        for(int i = 0; i < counter0.size(); i++){
             for(int j = 0; j < counter0[i].size(); j++){
-                write += counter0[i][j] - prev0[i][j];
-                read  += counter1[i][j] - prev1[i][j];
-                wpq   += counter2[i][j] - prev2[i][j];
-                rpq   += counter3[i][j] - prev3[i][j];
+                diff += counter0[i][j] - prev[i][j];
             }
-
-            std::cout << "W/R: " << write/read << ", wpq = " << wpq/ddrcyclecount << ", rpq = " << rpq/ddrcyclecount << std::endl;
         }
 
+        std::cout << "diff = " << diff;
+        diff = 0;
 
         prev0 = counter0;
-        prev1 = counter1;
-        prev2 = counter2;
-        prev3 = counter3;
+        // prev1 = counter1;
+        // prev2 = counter2;
+        // prev3 = counter3;
     }
 
 }
