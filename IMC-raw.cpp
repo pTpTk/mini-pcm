@@ -216,14 +216,14 @@ int main(int argc, char* argv[])
             }
         }
 
-        writeSW = write;
-        readSW  = read;
-        wpqSW   = wpq;
-        rpqSW   = rpq;
+        writeSW.push(write);
+        readSW.push(read);
+        wpqSW.push(wpq);
+        rpqSW.push(rpq);
 
-        std::cout << "W/R: " << writeSW()/readSW()
-            << ", wpq = " << wpqSW()/ddrcyclecount 
-            << ", rpq = " << rpqSW()/ddrcyclecount 
+        std::cout << "W/R: " << writeSW.read()/readSW()
+            << ", wpq = " << wpqSW.read()/ddrcyclecount 
+            << ", rpq = " << rpqSW.read()/ddrcyclecount 
             << std::endl;
 
         std::cout << "writeSW content: " << writeSW;
