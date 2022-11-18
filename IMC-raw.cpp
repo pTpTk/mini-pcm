@@ -122,7 +122,7 @@ int main(int argc, char* argv[])
     cerr << " Processor Counter Monitor: Raw Event Monitoring Utility \n";
     cerr << "\n";
 
-    double delay = 1.0;
+    double delay = -1.0;
     string program = string(argv[0]);
     int iteration = 1;
 
@@ -197,8 +197,7 @@ int main(int argc, char* argv[])
 
     while (1){
 
-        // ::sleep(delay);
-        for(int i = 0; i < 100000; i++){}
+        ::sleep(delay);
 
         // imc.getCounter(counter0, 0);
         // imc.getCounter(counter1, 1);
@@ -229,7 +228,7 @@ int main(int argc, char* argv[])
             }
         }
 
-        std::cout << "diff = " << diff << std::endl;
+        std::cout << "diff = " << std::dec << diff << std::endl;
         diff = 0;
 
         prev0 = counter0;

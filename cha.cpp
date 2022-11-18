@@ -28,6 +28,7 @@ CHA::CHA()
 {
     eventCount = 0;
     cboPMUs.resize(2);
+
     for (uint32 s = 0; s < cboPMUs.size(); ++s)
     {
         auto handle = (s == 0) ? std::make_shared<SafeMsrHandle>(0) 
@@ -110,14 +111,7 @@ int32 CHA::getNumCores() const
     if(num_cores >= 0) return num_cores;
 
     // Only works for linux systems
-    num_cores = readMaxFromSysFS("/sys/devices/system/cpu/present");
-    if(num_cores == -1)
-    {
-      std::cerr << "Cannot read number of present cores\n";
-      return -1;
-    }
-
-    num_cores++;
+    num_cores = sysconf(_SC_NPROCESSORS_ONLN);
     
     return num_cores;
 }
@@ -139,11 +133,11 @@ bool CHA::program(std::string configStr)
         std::string f0, f1;
         if (match("config=(0[xX][0-9a-fA-F]+)", item, f0)) {
             event = strtoll(f0.c_str(), NULL, 16);
-            std::cout << "Config read" << event << "\n";
+            std::cout << "Config read " << std::hex << event << "\n";
         }
         else if (match("config1=(0[xX][0-9a-fA-F]+)", item, f1)) {
             filter0 = strtol(f1.c_str(), NULL, 16);
-            std::cout  << "Config1 read" << filter0 << "\n";
+            std::cout  << "Config1 read " << std::hex << filter0 << "\n";
         }
     }
 
