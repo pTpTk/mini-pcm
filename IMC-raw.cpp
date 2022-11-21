@@ -190,7 +190,7 @@ int main(int argc, char* argv[])
     imc.getCounter(prev1, 1);
     imc.getCounter(prev2, 2);
     imc.getCounter(prev3, 3);
-    cha.getCounter(prev4, 4);
+    cha.getCounter(prev4, 0);
 
     double write, read, wpq, rpq;
     double ddrcyclecount = 1e9 * (delay*60) / (1/2.4);
@@ -204,7 +204,7 @@ int main(int argc, char* argv[])
         imc.getCounter(counter1, 1);
         imc.getCounter(counter2, 2);
         imc.getCounter(counter3, 3);
-        cha.getCounter(counter4, 4);
+        cha.getCounter(counter4, 0);
 
         for(int i = 0; i < 2; i++){
 
@@ -219,7 +219,6 @@ int main(int argc, char* argv[])
                 wpq   += counter2[i][j] - prev2[i][j];
                 rpq   += counter3[i][j] - prev3[i][j];
             }
-
             std::cout << "W/R: " << write/read << ", wpq = " << wpq/ddrcyclecount << ", rpq = " << rpq/ddrcyclecount << std::endl;
         }
 
