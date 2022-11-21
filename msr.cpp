@@ -90,10 +90,16 @@ uint64 MsrHandle::read48(uint64 msr_number)
     read(msr_number, &new_raw_value);
     if (new_raw_value < last_raw_value)
     {
+        extended_value += ((1ULL << 48) - last_raw_value) + new_raw_value;
+    }
+    else
+    {
         extended_value += (new_raw_value - last_raw_value);
     }
 
     last_raw_value = new_raw_value;
+
+    // printf("last_raw_value = %u, new_value = %u, extended_value = %u\n", last_raw_value, new_raw_value, extended_value);
 
     return extended_value;
 }
