@@ -184,12 +184,13 @@ int main(int argc, char* argv[])
     std::vector<std::vector<pcm::uint64>> counter1, prev1;
     std::vector<std::vector<pcm::uint64>> counter2, prev2;
     std::vector<std::vector<pcm::uint64>> counter3, prev3;
+    std::vector<std::vector<pcm::uint64>> counter4, prev4;
 
-    // imc.getCounter(prev0, 0);
-    // imc.getCounter(prev1, 1);
-    // imc.getCounter(prev2, 2);
-    // imc.getCounter(prev3, 3);
-    cha.getCounter(prev0, 0);
+    imc.getCounter(prev0, 0);
+    imc.getCounter(prev1, 1);
+    imc.getCounter(prev2, 2);
+    imc.getCounter(prev3, 3);
+    cha.getCounter(prev4, 4);
 
     double write, read, wpq, rpq;
     double ddrcyclecount = 1e9 * (delay*60) / (1/2.4);
@@ -199,32 +200,32 @@ int main(int argc, char* argv[])
 
         ::sleep(delay);
 
-        // imc.getCounter(counter0, 0);
-        // imc.getCounter(counter1, 1);
-        // imc.getCounter(counter2, 2);
-        // imc.getCounter(counter3, 3);
-        cha.getCounter(counter0, 0);
+        imc.getCounter(counter0, 0);
+        imc.getCounter(counter1, 1);
+        imc.getCounter(counter2, 2);
+        imc.getCounter(counter3, 3);
+        cha.getCounter(counter4, 4);
 
-        // for(int i = 0; i < 2; i++){
+        for(int i = 0; i < 2; i++){
 
-        //     write = 0;
-        //     read = 0;
-        //     wpq = 0;
-        //     rpq = 0;
+            write = 0;
+            read = 0;
+            wpq = 0;
+            rpq = 0;
 
-        //     for(int j = 0; j < counter0[i].size(); j++){
-        //         write += counter0[i][j] - prev0[i][j];
-        //         read  += counter1[i][j] - prev1[i][j];
-        //         wpq   += counter2[i][j] - prev2[i][j];
-        //         rpq   += counter3[i][j] - prev3[i][j];
-        //     }
-
-        //     std::cout << "W/R: " << write/read << ", wpq = " << wpq/ddrcyclecount << ", rpq = " << rpq/ddrcyclecount << std::endl;
-        // }
-
-        for(int i = 0; i < counter0.size(); i++){
             for(int j = 0; j < counter0[i].size(); j++){
-                diff += counter0[i][j] - prev0[i][j];
+                write += counter0[i][j] - prev0[i][j];
+                read  += counter1[i][j] - prev1[i][j];
+                wpq   += counter2[i][j] - prev2[i][j];
+                rpq   += counter3[i][j] - prev3[i][j];
+            }
+
+            std::cout << "W/R: " << write/read << ", wpq = " << wpq/ddrcyclecount << ", rpq = " << rpq/ddrcyclecount << std::endl;
+        }
+
+        for(int i = 0; i < counter4.size(); i++){
+            for(int j = 0; j < counter4[i].size(); j++){
+                diff += counter4[i][j] - prev4[i][j];
             }
         }
 
@@ -232,9 +233,10 @@ int main(int argc, char* argv[])
         diff = 0;
 
         prev0 = counter0;
-        // prev1 = counter1;
-        // prev2 = counter2;
-        // prev3 = counter3;
+        prev1 = counter1;
+        prev2 = counter2;
+        prev3 = counter3;
+        prev4 = counter4;
     }
 
 }
