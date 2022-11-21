@@ -3,7 +3,6 @@
 #include "global.h"
 #include "mmio.h"
 #include "msr.h"
-#include "width_extender.h"
 
 namespace pcm
 {
@@ -129,29 +128,25 @@ public:
     }
 };
 
-class CounterWidthExtenderRegister : public HWRegister
+class MSRRegister48 : public HWRegister
 {
-    std::shared_ptr<CounterWidthExtender> handle;
+    std::shared_ptr<SafeMsrHandle> handle;
+    size_t offset;
+
 public:
-    CounterWidthExtenderRegister(const std::shared_ptr<CounterWidthExtender> & handle_) :
-        handle(handle_)
+    MSRRegister48(const std::shared_ptr<SafeMsrHandle> & handle_, size_t offset_) :
+        handle(handle_),
+        offset(offset_)
     {
     }
     void operator= (uint64 val) override
     {
-        if (val == 0)
-        {
-            handle->reset();
-        }
-        else
-        {
-            std::cerr << "ERROR: writing non-zero values to CounterWidthExtenderRegister is not supported\n";
-            throw std::exception();
-        }
+        std::cerr << "ERROR: writing to MSR48 is not supported\n";
+        throw std::exception();
     }
     operator uint64 () override
     {
-        return handle->read();;
+        return handle->read48(offset);
     }
 };
 

@@ -10,14 +10,10 @@ inline UncorePMU makeCHAPMU(std::shared_ptr<SafeMsrHandle> handle, uint32 cbo)
                      std::make_shared<MSRRegister>(handle, CX_MSR_PMON_CTLY(cbo, 1)),
                      std::make_shared<MSRRegister>(handle, CX_MSR_PMON_CTLY(cbo, 2)),
                      std::make_shared<MSRRegister>(handle, CX_MSR_PMON_CTLY(cbo, 3)),
-                     std::make_shared<CounterWidthExtenderRegister>(
-                         std::make_shared<CounterWidthExtender>(new CounterWidthExtender::MsrHandleCounter(handle, CX_MSR_PMON_CTRY(cbo, 0)), 48, 5555)),
-                     std::make_shared<CounterWidthExtenderRegister>(
-                         std::make_shared<CounterWidthExtender>(new CounterWidthExtender::MsrHandleCounter(handle, CX_MSR_PMON_CTRY(cbo, 1)), 48, 5555)),
-                     std::make_shared<CounterWidthExtenderRegister>(
-                         std::make_shared<CounterWidthExtender>(new CounterWidthExtender::MsrHandleCounter(handle, CX_MSR_PMON_CTRY(cbo, 2)), 48, 5555)),
-                     std::make_shared<CounterWidthExtenderRegister>(
-                         std::make_shared<CounterWidthExtender>(new CounterWidthExtender::MsrHandleCounter(handle, CX_MSR_PMON_CTRY(cbo, 3)), 48, 5555)),
+                     std::make_shared<MSRRegister48>(handle, CX_MSR_PMON_CTRY(cbo, 0)),
+                     std::make_shared<MSRRegister48>(handle, CX_MSR_PMON_CTRY(cbo, 1)),
+                     std::make_shared<MSRRegister48>(handle, CX_MSR_PMON_CTRY(cbo, 2)),
+                     std::make_shared<MSRRegister48>(handle, CX_MSR_PMON_CTRY(cbo, 3)),
                      std::shared_ptr<MSRRegister>(),
                      std::shared_ptr<MSRRegister>(),
                      std::make_shared<MSRRegister>(handle, CX_MSR_PMON_BOX_FILTER(cbo)),
@@ -125,7 +121,6 @@ bool CHA::program(std::string configStr)
     }
 
     const auto configArray = split(configStr, ',');
-    bool fixed = false; // TODO: find out where fixed is used and implement support
     uint64 event;
     uint32 filter0 = -1;
     for (auto item : configArray)

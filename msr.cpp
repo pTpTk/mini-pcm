@@ -81,4 +81,21 @@ int32 MsrHandle::read(uint64 msr_number, uint64 * value)
     return ::pread(fd, (void *)value, sizeof(uint64), msr_number);
 }
 
+uint64 MsrHandle::read48(uint64 msr_number)
+{
+    static uint64 last_raw_value = 0;
+    static uint64 extended_value = 0;
+
+    uint64 new_raw_value = 0;
+    read(msr_number, &new_raw_value);
+    if (new_raw_value < last_raw_value)
+    {
+        extended_value += (new_raw_value - last_raw_value);
+    }
+
+    last_raw_value = new_raw_value;
+
+    return extended_value;
+}
+
 } // namespace pcm

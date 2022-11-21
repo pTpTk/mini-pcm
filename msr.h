@@ -44,6 +44,8 @@ public:
     int32 write(uint64 msr_number, uint64 value);
     int32 getCoreId() { return (int32)cpu_id; }
     virtual ~MsrHandle();
+
+    uint64 read48(uint64 msr_number);
 };
 
 class SafeMsrHandle
@@ -76,6 +78,14 @@ public:
             return pHandle->write(msr_number, value);
 
         return (int32)sizeof(uint64);
+    }
+
+    uint64 read48(uint64 msr_number)
+    {
+        if (pHandle)
+            return pHandle->read48(msr_number);
+
+        return 0;
     }
 
     int32 getCoreId()
