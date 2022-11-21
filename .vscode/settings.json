@@ -77,7 +77,8 @@
         "xlocbuf": "cpp",
         "xlocmes": "cpp",
         "csignal": "cpp",
-        "cfenv": "cpp"
+        "cfenv": "cpp",
+        "shared_mutex": "cpp"
     },
     "C_Cpp.errorSquiggles": "Enabled"
 }

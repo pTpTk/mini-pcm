@@ -46,7 +46,7 @@ CHA::~CHA(){}
 
 PciHandleType * getDeviceHandle(uint32 vendorId, uint32 deviceId)
 {
-    const std::vector<MCFGRecord> & mcfg = PciHandleMM::getMCFGRecords();
+    const std::vector<MCFGRecord> & mcfg = PciHandle::getMCFGRecords();
 
     for(uint32 s = 0; s < (uint32)mcfg.size(); ++s)
     {

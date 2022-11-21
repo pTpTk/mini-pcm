@@ -165,7 +165,7 @@ void IMC::initSocket2Ubox0Bus()
 {
     if(!socket2UBOX0bus.empty()) return;
 
-    const std::vector<MCFGRecord> & mcfg = PciHandleMM::getMCFGRecords();
+    const std::vector<MCFGRecord> & mcfg = PciHandle::getMCFGRecords();
 
     for(uint32 s = 0; s < (uint32)mcfg.size(); ++s)
     for (uint32 bus = (uint32)mcfg[s].startBusNumber; bus <= (uint32)mcfg[s].endBusNumber; ++bus)
