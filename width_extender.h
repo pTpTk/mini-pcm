@@ -22,13 +22,7 @@ namespace pcm {
 class CounterWidthExtender
 {
 public:
-    struct AbstractRawCounter
-    {
-        virtual uint64 operator () () = 0;
-        virtual ~AbstractRawCounter() { }
-    };
-
-    struct MsrHandleCounter : public AbstractRawCounter
+    struct MsrHandleCounter
     {
         std::shared_ptr<SafeMsrHandle> msr;
         uint64 msr_addr;
@@ -42,13 +36,14 @@ public:
     };
 
 private:
+    std::shared_ptr<SafeMsrHandle> msr;
+    uint64 msr_addr;
+
     Mutex CounterMutex;
 
-    AbstractRawCounter * raw_counter;
+    // MsrHandleCounter * raw_counter;
     uint64 extended_value;
     uint64 last_raw_value;
-    uint64 counter_width;
-    uint32 watchdog_delay_ms;
 
     CounterWidthExtender();                                           // forbidden
     CounterWidthExtender(CounterWidthExtender &);                     // forbidden
@@ -60,10 +55,10 @@ private:
         uint64 result = 0, new_raw_value = 0;
         CounterMutex.lock();
 
-        new_raw_value = (*raw_counter)();
+        msr->read(msr_addr, &new_raw_value);
         if (new_raw_value < last_raw_value)
         {
-            extended_value += ((1ULL << counter_width) - last_raw_value) + new_raw_value;
+            extended_value += ((1ULL << 48) - last_raw_value) + new_raw_value;
         }
         else
         {
@@ -80,16 +75,17 @@ private:
 
 public:
 
-    CounterWidthExtender(AbstractRawCounter * raw_counter_, uint64 counter_width_, uint32 watchdog_delay_ms_) : raw_counter(raw_counter_), counter_width(counter_width_), watchdog_delay_ms(watchdog_delay_ms_)
+    CounterWidthExtender(std::shared_ptr<SafeMsrHandle> msr_, uint64 msr_addr_) : msr(msr_), msr_addr(msr_addr_)
     {
-        last_raw_value = (*raw_counter)();
+        msr->read(msr_addr, &last_raw_value);
+        // last_raw_value = (*raw_counter)();
         extended_value = last_raw_value;
         //std::cout << "Initial Value " << extended_value << "\n";
     }
 
     virtual ~CounterWidthExtender()
     {
-        if (raw_counter) delete raw_counter;
+        // if (msr) delete msr;
     }
 
     uint64 read() // read extended value
@@ -99,7 +95,9 @@ public:
     void reset()
     {
         CounterMutex.lock();
-        extended_value = last_raw_value = (*raw_counter)();
+        msr->read(msr_addr, &last_raw_value);
+        extended_value = last_raw_value;
+        // extended_value = last_raw_value = (*raw_counter)();
         CounterMutex.unlock();
     }
 };
