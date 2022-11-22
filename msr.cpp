@@ -18,19 +18,8 @@
 namespace pcm {
 // here comes a Linux version
 
-bool noMSRMode()
-{
-    static int noMSR = -1;
-    if (noMSR < 0)
-    {
-        noMSR = (safe_getenv("PCM_NO_MSR") == std::string("1")) ? 1 : 0;
-    }
-    return 1 == noMSR;
-}
-
 MsrHandle::MsrHandle(uint32 cpu) : fd(-1), cpu_id(cpu)
 {
-    if (noMSRMode()) return;
     constexpr auto allowWritesPath = "/sys/module/msr/parameters/allow_writes";
     static bool writesEnabled = false;
     if (writesEnabled == false)

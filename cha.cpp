@@ -10,14 +10,10 @@ inline UncorePMU makeCHAPMU(std::shared_ptr<SafeMsrHandle> handle, uint32 cbo)
                      std::make_shared<MSRRegister>(handle, CX_MSR_PMON_CTLY(cbo, 1)),
                      std::make_shared<MSRRegister>(handle, CX_MSR_PMON_CTLY(cbo, 2)),
                      std::make_shared<MSRRegister>(handle, CX_MSR_PMON_CTLY(cbo, 3)),
-                     std::make_shared<CounterWidthExtenderRegister>(
-                         std::make_shared<CounterWidthExtender>(handle, CX_MSR_PMON_CTRY(cbo, 0))),
-                     std::make_shared<CounterWidthExtenderRegister>(
-                         std::make_shared<CounterWidthExtender>(handle, CX_MSR_PMON_CTRY(cbo, 1))),
-                     std::make_shared<CounterWidthExtenderRegister>(
-                         std::make_shared<CounterWidthExtender>(handle, CX_MSR_PMON_CTRY(cbo, 2))),
-                     std::make_shared<CounterWidthExtenderRegister>(
-                         std::make_shared<CounterWidthExtender>(handle, CX_MSR_PMON_CTRY(cbo, 3))),
+                     std::make_shared<MSRRegister48>(handle, CX_MSR_PMON_CTRY(cbo, 0)),
+                     std::make_shared<MSRRegister48>(handle, CX_MSR_PMON_CTRY(cbo, 1)),
+                     std::make_shared<MSRRegister48>(handle, CX_MSR_PMON_CTRY(cbo, 2)),
+                     std::make_shared<MSRRegister48>(handle, CX_MSR_PMON_CTRY(cbo, 3)),
                      std::shared_ptr<MSRRegister>(),
                      std::shared_ptr<MSRRegister>(),
                      std::make_shared<MSRRegister>(handle, CX_MSR_PMON_BOX_FILTER(cbo)),

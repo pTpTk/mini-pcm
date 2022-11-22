@@ -28,8 +28,6 @@
 
 namespace pcm {
 
-bool noMSRMode();
-
 class MsrHandle
 {
     int32 fd;
@@ -98,6 +96,71 @@ public:
 
     virtual ~SafeMsrHandle()
     { }
+};
+
+class SafeMsrHandle48
+{
+private:
+    std::shared_ptr<SafeMsrHandle> msr;
+    uint64 msr_addr;
+
+    Mutex CounterMutex;
+
+    uint64 extended_value;
+    uint64 last_raw_value;
+
+    SafeMsrHandle48();                                           // forbidden
+    SafeMsrHandle48(SafeMsrHandle48 &);                     // forbidden
+    SafeMsrHandle48 & operator = (const SafeMsrHandle48 &); // forbidden
+
+
+    uint64 internal_read()
+    {
+        uint64 result = 0, new_raw_value = 0;
+        CounterMutex.lock();
+
+        msr->read(msr_addr, &new_raw_value);
+        if (new_raw_value < last_raw_value)
+        {
+            extended_value += ((1ULL << 48) - last_raw_value) + new_raw_value;
+        }
+        else
+        {
+            extended_value += (new_raw_value - last_raw_value);
+        }
+
+        last_raw_value = new_raw_value;
+
+        result = extended_value;
+
+        CounterMutex.unlock();
+        return result;
+    }
+
+public:
+
+    SafeMsrHandle48(std::shared_ptr<SafeMsrHandle> msr_, uint64 msr_addr_) : msr(msr_), msr_addr(msr_addr_)
+    {
+        msr->read(msr_addr, &last_raw_value);
+        extended_value = last_raw_value;
+        //std::cout << "Initial Value " << extended_value << "\n";
+    }
+
+    virtual ~SafeMsrHandle48()
+    {
+    }
+
+    uint64 read() // read extended value
+    {
+        return internal_read();
+    }
+    void reset()
+    {
+        CounterMutex.lock();
+        msr->read(msr_addr, &last_raw_value);
+        extended_value = last_raw_value;
+        CounterMutex.unlock();
+    }
 };
 
 } // namespace pcm
