@@ -196,7 +196,8 @@ int main(int argc, char* argv[])
     double ddrcyclecount = 1e9 * (delay*60) / (1/2.4);
     long long diff;
 
-    while (1){
+    // while (1){
+    for(int aaa = 1; aaa < 10; aaa++){
 
         ::sleep(delay);
 

@@ -25,7 +25,7 @@ mmio.o: mmio.h mmio.cpp global.h types.h
 	g++ -c mmio.cpp -o mmio.o
 
 debug: $(wildcard *.h) $(wildcard *.cpp)
-	g++ -g -o debug.x $(wildcard *.cpp)
+	g++ -g -pg -o debug.x $(wildcard *.cpp)
 
 clean:
 	rm -rf *.x *.o *~ *.d *.a *.so
