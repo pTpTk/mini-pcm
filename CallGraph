@@ -1,0 +1,39 @@
+main [9]
+    pcm::CHA::CHA() [1939]
+        
+        pcm::CHA::getMaxNumOfCBoxes() const [726]
+            pcm::getDeviceHandle(unsigned int, unsigned int) [1935]
+                pcm::PciHandle::PciHandle(unsigned int, unsigned int, unsigned int, unsigned int) [335]
+                pcm::PciHandle::getMCFGRecords() [1786]
+
+            pcm::PciHandle::read32(unsigned long long, unsigned int*) [486]
+
+        pcm::CHA::getNumCores() const [1962]
+        
+        std::shared_ptr<pcm::SafeMsrHandle> std::make_shared<pcm::SafeMsrHandle, int>(int&&) [1892]
+            pcm::SafeMsrHandle::SafeMsrHandle(unsigned int) [1778]
+                pcm::MsrHandle::MsrHandle(unsigned int) [1783]
+        
+        pcm::makeCHAPMU(std::shared_ptr<pcm::SafeMsrHandle>, unsigned int) [728]
+        pcm::CHA::initFreeze() [1936]
+    
+    addEvent(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, pcm::IMC&, pcm::CHA&) [1683]
+        
+        pcm::IMC::program(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [1722]
+
+        pcm::CHA::program(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [1938]
+            pcm::MSRRegister::operator=(unsigned long long) [166]
+                pcm::SafeMsrHandle::write(unsigned long long, unsigned long long) [167]
+                    pcm::MsrHandle::write(unsigned long long, unsigned long long) [168]
+    
+    pcm::CHA::run() [1937]
+        pcm::UncorePMU::resetUnfreeze() [653]
+
+    pcm::CHA::getCounter(std::vector<std::vector<unsigned long long, std::allocator<unsigned long long> >, std::allocator<std::vector<unsigned long long, std::allocator<unsigned long long> > > >&, int) [1544]
+        pcm::UncorePMU::freeze() [180]
+
+        pcm::MSRRegister48::operator unsigned long long() [226]
+            pcm::SafeMsrHandle48::read() [228]
+                pcm::SafeMsrHandle48::internal_read() [227]
+
+        pcm::UncorePMU::unfreeze() [181]
