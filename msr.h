@@ -38,9 +38,6 @@ class MsrHandle
     MsrHandle(const MsrHandle &);               // forbidden
     MsrHandle & operator = (const MsrHandle &); // forbidden
 
-    uint64 last_raw_value;
-    uint64 extended_value;
-
 public:
     MsrHandle(uint32 cpu);
     int32 read(uint64 msr_number, uint64 * value);
@@ -48,7 +45,6 @@ public:
     int32 getCoreId() { return (int32)cpu_id; }
     virtual ~MsrHandle();
 
-    uint64 read48(uint64 msr_number);
 };
 
 class SafeMsrHandle
@@ -59,11 +55,16 @@ class SafeMsrHandle
     SafeMsrHandle(const SafeMsrHandle &);               // forbidden
     SafeMsrHandle & operator = (const SafeMsrHandle &); // forbidden
 
+    uint64 last_raw_value;
+    uint64 extended_value;
+
 public:
     SafeMsrHandle() { }
 
-    SafeMsrHandle(uint32 core_id) : pHandle(new MsrHandle(core_id))
-    { }
+    SafeMsrHandle(uint32 core_id) : pHandle(new MsrHandle(core_id)),
+        last_raw_value(0), extended_value(0)
+    {
+    }
 
     int32 read(uint64 msr_number, uint64 * value)
     {
@@ -83,17 +84,7 @@ public:
         return (int32)sizeof(uint64);
     }
 
-    uint64 read48(uint64 msr_number)
-    {
-        uint64 value = 0;
-        if (pHandle){
-            lock();
-            value = pHandle->read48(msr_number);
-            unlock();
-        }
-
-        return value;
-    }
+    uint64 read48(uint64 msr_number);
 
     int32 getCoreId()
     {

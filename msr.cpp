@@ -28,9 +28,7 @@ bool noMSRMode()
     return 1 == noMSR;
 }
 
-MsrHandle::MsrHandle(uint32 cpu) : fd(-1), cpu_id(cpu),
-                                   last_raw_value(0),
-                                   extended_value(0)
+MsrHandle::MsrHandle(uint32 cpu) : fd(-1), cpu_id(cpu)
 {
     if (noMSRMode()) return;
     constexpr auto allowWritesPath = "/sys/module/msr/parameters/allow_writes";
@@ -83,9 +81,12 @@ int32 MsrHandle::read(uint64 msr_number, uint64 * value)
     return ::pread(fd, (void *)value, sizeof(uint64), msr_number);
 }
 
-uint64 MsrHandle::read48(uint64 msr_number)
+uint64 SafeMsrHandle::read48(uint64 msr_number)
 {
+    if(!pHandle) return 0;
+
     uint64 new_raw_value = 0;
+    lock();
     read(msr_number, &new_raw_value);
     if (new_raw_value < last_raw_value)
     {
@@ -99,6 +100,8 @@ uint64 MsrHandle::read48(uint64 msr_number)
     last_raw_value = new_raw_value;
 
     // printf("last_raw_value = %llu, new_value = %llu, extended_value = %llu\n", last_raw_value, new_raw_value, extended_value);
+
+    unlock();
 
     return extended_value;
 }
