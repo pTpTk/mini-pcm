@@ -38,6 +38,9 @@ class MsrHandle
     MsrHandle(const MsrHandle &);               // forbidden
     MsrHandle & operator = (const MsrHandle &); // forbidden
 
+    uint64 last_raw_value;
+    uint64 extended_value;
+
 public:
     MsrHandle(uint32 cpu);
     int32 read(uint64 msr_number, uint64 * value);
