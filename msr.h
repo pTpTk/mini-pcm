@@ -85,10 +85,14 @@ public:
 
     uint64 read48(uint64 msr_number)
     {
-        if (pHandle)
-            return pHandle->read48(msr_number);
+        uint64 value = 0;
+        if (pHandle){
+            lock();
+            value = pHandle->read48(msr_number);
+            unlock();
+        }
 
-        return 0;
+        return value;
     }
 
     int32 getCoreId()
