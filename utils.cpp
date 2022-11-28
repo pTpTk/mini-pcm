@@ -102,23 +102,4 @@ bool writeSysFS(const char * path, const std::string & value, bool silent = fals
     return true;
 }
 
-int readMaxFromSysFS(const char * path)
-{
-    std::string content = readSysFS(path);
-    const char * buffer = content.c_str();
-    int result = -1;
-    std::istringstream(buffer) >> s_expect("0-") >> result;
-    if(result == -1)
-    {
-       std::istringstream(buffer) >> result;
-    }
-    return result;
-}
-
-std::string safe_getenv(const char* env)
-{
-    const auto getenvResult = std::getenv(env);
-    return getenvResult ? std::string(getenvResult) : std::string("");
-}
-
 }   // namespace pcm
