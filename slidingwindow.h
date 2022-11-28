@@ -27,8 +27,32 @@ class slidingWindow
 
         return sum/queue.size();
     }
+
+    double read()
+    {
+        if(queue.empty())
+            return 0;
+
+        double sum = 0;
+
+        for(auto& item : queue)
+            sum += item;
+
+        return sum/queue.size();
+    }
     
     void operator= (T newItem)
+    {
+        if(queue.size() < size)
+            queue.push_back(newItem);
+        else
+        {
+            queue.push_back(newItem);
+            queue.pop_front();
+        }
+    }
+
+    void push(T newItem)
     {
         if(queue.size() < size)
             queue.push_back(newItem);

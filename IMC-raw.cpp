@@ -30,6 +30,7 @@
 
 #include "imc.h"
 #include "cha.h"
+#include "slidingwindow.h"
 
 #include <vector>
 #define PCM_DELAY_DEFAULT 1.0 // in seconds
@@ -195,6 +196,7 @@ int main(int argc, char* argv[])
     double write, read, wpq, rpq;
     double ddrcyclecount = 1e9 * (delay*60) / (1/2.4);
     long long diff;
+    slidingWindow<int> writeSW(10), readSW(10), wpqSW(10), rpqSW(10);
 
     // while (1){
     for(int aaa = 1; aaa < 10; aaa++){
@@ -207,13 +209,12 @@ int main(int argc, char* argv[])
         imc.getCounter(counter3, 3);
         cha.getCounter(counter4, 0);
 
+        write = 0;
+        read = 0;
+        wpq = 0;
+        rpq = 0;
+        
         for(int i = 0; i < 2; i++){
-
-            write = 0;
-            read = 0;
-            wpq = 0;
-            rpq = 0;
-
             for(int j = 0; j < counter0[i].size(); j++){
                 write += counter0[i][j] - prev0[i][j];
                 read  += counter1[i][j] - prev1[i][j];
