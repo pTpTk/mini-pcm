@@ -35,6 +35,6 @@ class IMC{
 
 };   // class IMC
 
-inline UncorePMU makeIMCPMU(std::shared_ptr<MMIORange> handle);
+inline UncorePMU makeIMCPMU(std::shared_ptr<MMIORange>& handle);
 
 }   // namespace pcm

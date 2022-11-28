@@ -3,7 +3,7 @@
 namespace pcm
 {
 
-inline UncorePMU makeCHAPMU(std::shared_ptr<SafeMsrHandle> handle, uint32 cbo)
+inline UncorePMU makeCHAPMU(std::shared_ptr<SafeMsrHandle>& handle, uint32 cbo)
 {
     return UncorePMU(std::make_shared<MSRRegister>(handle, CX_MSR_PMON_BOX_CTL(cbo)),
                      std::make_shared<MSRRegister>(handle, CX_MSR_PMON_CTLY(cbo, 0)),

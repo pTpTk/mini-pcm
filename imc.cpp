@@ -2,7 +2,7 @@
 
 namespace pcm
 {
-inline UncorePMU makeIMCPMU(std::shared_ptr<MMIORange> handle)
+inline UncorePMU makeIMCPMU(std::shared_ptr<MMIORange>& handle)
 {
     return UncorePMU(
         std::make_shared<MMIORegister32>(handle, SERVER_MC_CH_PMON_BOX_CTL_OFFSET),
