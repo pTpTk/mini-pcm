@@ -29,6 +29,7 @@
 #include "global.h"
 
 #include "imc.h"
+#include "cha.h"
 #include "slidingwindow.h"
 
 #include <vector>
@@ -36,7 +37,7 @@
 #define PCM_DELAY_MIN 0.015 // 15 milliseconds is practical on most modern CPUs
 #define MAX_CORES 4096
 using namespace std;
-//using namespace pcm;
+// using namespace pcm;
 
 bool show_partial_core_output = false;
 bitset<MAX_CORES> ycores;
@@ -67,7 +68,7 @@ void print_usage(const string progname)
     cerr << "\n";
 }
 
-bool addEvent(string eventStr, pcm::IMC & imc)
+bool addEvent(string eventStr, pcm::IMC& imc, pcm::CHA& cha)
 {
 
     enum class pmuType {
@@ -100,6 +101,7 @@ bool addEvent(string eventStr, pcm::IMC & imc)
             imc.program(configStr);
             break;
         case pmuType::CHA:
+            cha.program(configStr);
             break;
         default:
             return false;
@@ -109,11 +111,12 @@ bool addEvent(string eventStr, pcm::IMC & imc)
 }
 
 
-
-
 int main(int argc, char* argv[])
 {
     //set_signal_handlers();
+
+    pcm::IMC imc;
+    pcm::CHA cha;
 
 
     cerr << "\n";
@@ -123,8 +126,6 @@ int main(int argc, char* argv[])
     double delay = -1.0;
     string program = string(argv[0]);
     int iteration = 1;
-
-    pcm::IMC imc;
 
     if (argc > 1) do
     {
@@ -151,7 +152,7 @@ int main(int argc, char* argv[])
             argv++;
             argc--;
 
-            if (addEvent(*argv, imc) == false)
+            if (addEvent(*argv, imc, cha) == false)
             {
                 exit(EXIT_FAILURE);
             }
@@ -171,6 +172,7 @@ int main(int argc, char* argv[])
     } while (argc > 1); // end of command line parsing loop
 
     imc.run();
+    cha.run();
 
     if (delay <= 0.0) delay = PCM_DELAY_DEFAULT;
 
@@ -183,24 +185,29 @@ int main(int argc, char* argv[])
     std::vector<std::vector<pcm::uint64>> counter1, prev1;
     std::vector<std::vector<pcm::uint64>> counter2, prev2;
     std::vector<std::vector<pcm::uint64>> counter3, prev3;
+    std::vector<std::vector<pcm::uint64>> counter4, prev4;
 
-    imc.getMCCounter(prev0, 0);
-    imc.getMCCounter(prev1, 1);
-    imc.getMCCounter(prev2, 2);
-    imc.getMCCounter(prev3, 3);
+    imc.getCounter(prev0, 0);
+    imc.getCounter(prev1, 1);
+    imc.getCounter(prev2, 2);
+    imc.getCounter(prev3, 3);
+    cha.getCounter(prev4, 0);
 
     double write, read, wpq, rpq;
     double ddrcyclecount = 1e9 * (delay*60) / (1/2.4);
+    long long diff;
     slidingWindow<int> writeSW(10), readSW(10), wpqSW(10), rpqSW(10);
 
-    while (1){
+    // while (1){
+    for(int aaa = 1; aaa < 10; aaa++){
 
         ::sleep(delay);
 
-        imc.getMCCounter(counter0, 0);
-        imc.getMCCounter(counter1, 1);
-        imc.getMCCounter(counter2, 2);
-        imc.getMCCounter(counter3, 3);
+        imc.getCounter(counter0, 0);
+        imc.getCounter(counter1, 1);
+        imc.getCounter(counter2, 2);
+        imc.getCounter(counter3, 3);
+        cha.getCounter(counter4, 0);
 
         write = 0;
         read = 0;
@@ -214,27 +221,23 @@ int main(int argc, char* argv[])
                 wpq   += counter2[i][j] - prev2[i][j];
                 rpq   += counter3[i][j] - prev3[i][j];
             }
+            std::cout << "W/R: " << write/read << ", wpq = " << wpq/ddrcyclecount << ", rpq = " << rpq/ddrcyclecount << std::endl;
         }
 
-        writeSW.push(write);
-        readSW.push(read);
-        wpqSW.push(wpq);
-        rpqSW.push(rpq);
+        for(int i = 0; i < counter4.size(); i++){
+            for(int j = 0; j < counter4[i].size(); j++){
+                diff += counter4[i][j] - prev4[i][j];
+            }
+        }
 
-        std::cout << "W/R: " << writeSW.read()/readSW()
-            << ", wpq = " << wpqSW.read()/ddrcyclecount 
-            << ", rpq = " << rpqSW.read()/ddrcyclecount 
-            << std::endl;
-
-        std::cout << "writeSW content: " << writeSW;
-        std::cout << "readSW content: " << readSW;
-        std::cout << "wpqSW content: " << wpqSW;
-        std::cout << "rpqSW content: " << rpqSW;
+        std::cout << "diff = " << std::dec << diff << std::endl;
+        diff = 0;
 
         prev0 = counter0;
         prev1 = counter1;
         prev2 = counter2;
         prev3 = counter3;
+        prev4 = counter4;
     }
 
 }

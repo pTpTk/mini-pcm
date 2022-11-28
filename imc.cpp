@@ -2,7 +2,7 @@
 
 namespace pcm
 {
-inline UncorePMU makeIMCPMU(std::shared_ptr<MMIORange> handle)
+inline UncorePMU makeIMCPMU(std::shared_ptr<MMIORange>& handle)
 {
     return UncorePMU(
         std::make_shared<MMIORegister32>(handle, SERVER_MC_CH_PMON_BOX_CTL_OFFSET),
@@ -134,7 +134,7 @@ void IMC::getDRAMClocks(std::vector<std::vector<uint64>>& M)
     }
 }
 
-void IMC::getMCCounter(std::vector<std::vector<uint64>>& M, int counterId)
+void IMC::getCounter(std::vector<std::vector<uint64>>& M, int counterId)
 {
     if (counterId >= eventCount){
         std::cerr << "Trying to read unused counter " << counterId;
@@ -165,7 +165,7 @@ void IMC::initSocket2Ubox0Bus()
 {
     if(!socket2UBOX0bus.empty()) return;
 
-    const std::vector<MCFGRecord> & mcfg = PciHandleMM::getMCFGRecords();
+    const std::vector<MCFGRecord> & mcfg = PciHandle::getMCFGRecords();
 
     for(uint32 s = 0; s < (uint32)mcfg.size(); ++s)
     for (uint32 bus = (uint32)mcfg[s].startBusNumber; bus <= (uint32)mcfg[s].endBusNumber; ++bus)

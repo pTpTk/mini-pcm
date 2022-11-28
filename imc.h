@@ -14,7 +14,7 @@ class IMC{
     bool program(std::string configStr);
     void enableFixed();
     void getDRAMClocks(std::vector<std::vector<uint64>>& M);
-    void getMCCounter(std::vector<std::vector<uint64>>& M, int counterId);
+    void getCounter(std::vector<std::vector<uint64>>& M, int counterId);
     void getDRAMReads(std::vector<uint64>& M);
     void getDRAMWrites(std::vector<uint64>& M);
     virtual ~IMC(){}
@@ -35,6 +35,6 @@ class IMC{
 
 };   // class IMC
 
-inline UncorePMU makeIMCPMU(std::shared_ptr<MMIORange> handle);
+inline UncorePMU makeIMCPMU(std::shared_ptr<MMIORange>& handle);
 
 }   // namespace pcm

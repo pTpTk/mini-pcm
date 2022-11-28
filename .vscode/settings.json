@@ -75,6 +75,10 @@
         "xutility": "cpp",
         "locale": "cpp",
         "xlocbuf": "cpp",
-        "xlocmes": "cpp"
-    }
+        "xlocmes": "cpp",
+        "csignal": "cpp",
+        "cfenv": "cpp",
+        "shared_mutex": "cpp"
+    },
+    "C_Cpp.errorSquiggles": "Enabled"
 }
